@@ -1,4 +1,4 @@
-#include "utl/BIT.h"
+#include "utl/bit.h"
 #include "utl/utf.h"
 
 u8 utf8_class[32] = {
