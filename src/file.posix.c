@@ -21,7 +21,7 @@ StrList file_walk(Arena *arena, Str directory)
     for (Task *task = head_task; task != 0; task = task->next)
     {
         Str pat = push_str_cat(scratch.arena, task->dir, str_lit("/*"));
-        DIR *dir = opendir(task->dir.ptr);
+        DIR *dir = opendir((const char*)task->dir.ptr);
         if (dir == 0)
         {
             continue;
@@ -29,10 +29,10 @@ StrList file_walk(Arena *arena, Str directory)
         struct dirent *entry;
         while ((entry = readdir(dir)) != 0)
         {
-            Str name = str_from_cstr(scratch.arena, entry->d_name);
+            Str name = str_from_cstr(entry->d_name);
             Str path = push_strf(scratch.arena, "%.*s/%.*s", str_varg(task->dir), str_varg(name));
             struct stat path_stat;
-            stat(path.ptr, &path_stat);
+            stat((const char*)path.ptr, &path_stat);
             if (S_ISDIR(path_stat.st_mode))
             {
                 if (entry->d_name[0] != '.')
@@ -55,10 +55,8 @@ StrList file_walk(Arena *arena, Str directory)
 
 Str file_cwd(Arena *arena)
 {
-    Temp scratch = scratch_begin(&arena, 1);
     long size = pathconf(".", _PC_PATH_MAX);
-    u8 *buf = push_array(scratch.arena, u8, size);
-    Str result = str_from_cstr(arena, getcwd((char *)buf, size));
-    temp_end(scratch);
-    return result;
+    u8 *buf = push_array(arena, u8, size);
+    getcwd((char *)buf, size);
+    return str_from_cstr(buf);
 }
