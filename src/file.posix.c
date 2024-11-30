@@ -29,7 +29,7 @@ StrList file_walk(Arena *arena, Str directory)
         struct dirent *entry;
         while ((entry = readdir(dir)) != 0)
         {
-            Str name = str_from_cstr(entry->d_name);
+            Str name = str_from_cstr((u8*)entry->d_name);
             Str path = push_strf(scratch.arena, "%.*s/%.*s", str_varg(task->dir), str_varg(name));
             struct stat path_stat;
             stat((const char*)path.ptr, &path_stat);
