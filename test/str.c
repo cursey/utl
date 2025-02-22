@@ -218,6 +218,17 @@ static void test_str_substr(void)
     require(str_eq(b, a));
 }
 
+static void test_str_trim(void)
+{
+    Str a = str_lit("  \t \n  \r hello world  \t \n  \r ");
+    Str b = str_trim_start(a, str_lit(" \t\n\r"));
+    require(str_eq(b, str_lit("hello world  \t \n  \r ")));
+    Str c = str_trim_end(a, str_lit(" \t\n\r"));
+    require(str_eq(c, str_lit("  \t \n  \r hello world")));
+    Str d = str_trim(a, str_lit(" \t\n\r"));
+    require(str_eq(d, str_lit("hello world")));
+}
+
 void test_str(void)
 {
     run_test(test_is_upper_is_lower);
@@ -237,4 +248,5 @@ void test_str(void)
     run_test(test_str_rfind);
     run_test(test_str_rfind_i);
     run_test(test_str_substr);
+    run_test(test_str_trim);
 }
